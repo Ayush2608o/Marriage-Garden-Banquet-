@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | Royal Venue Operations{% endblock %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/admin.css' %}">{% endblock %}
+{% block extrahead %}{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Italiana&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#11130f">
+{% endblock %}
+{% block branding %}
+  <div id="site-name">
+    <a class="rv-admin-brand" href="{% url 'admin:index' %}">
+      <span class="rv-admin-crest" aria-hidden="true">R</span>
+      <span class="rv-admin-wordmark">ROYAL <em>VENUE</em><small>OPERATIONS</small></span>
+    </a>
+  </div>
+{% endblock %}
+{% block nav-global %}
+  {% if has_permission %}
+    <nav class="rv-admin-nav" aria-label="Operations shortcuts">
+      <a href="{% url 'whatsapp-inbox' %}">Customer inbox{% if unread_customer_messages %}<span class="rv-admin-badge">{{ unread_customer_messages }}</span>{% endif %}</a>
+      <a href="{% url 'owner-dashboard' %}">Workspace</a>
+      <a href="/">View website</a>
+    </nav>
+  {% endif %}
+{% endblock %}

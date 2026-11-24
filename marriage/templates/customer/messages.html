@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Messages — Royal Venue{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'css/chat.css' %}">{% endblock %}
+{% block content %}
+<div class="chat-shell">
+  <main class="chat" id="chat" data-feed-url="{% url 'customer-messages-feed' %}" data-send-url="{% url 'customer-messages-send' %}" aria-label="Chat with the Royal Venue team">
+
+    <header class="chat__head">
+      <a class="chat__back" href="{% url 'customer-dashboard' %}" aria-label="Back to my account">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <div class="chat__avatar" aria-hidden="true">R</div>
+      <div class="chat__who">
+        <strong>Royal Venue</strong>
+        <span id="chat-status" data-default="Our team replies here · usually within one working day">Our team replies here · usually within one working day</span>
+      </div>
+      <a class="chat__home" href="{% url 'home' %}" aria-label="Go to website home">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>
+      </a>
+    </header>
+
+    <div class="chat__banner" id="chat-banner" hidden></div>
+
+    <div class="chat__body" id="chat-body" role="log" aria-live="polite" aria-relevant="additions">
+      <div class="chat__list" id="chat-list">
+        <div class="chat__notice">Messages here go straight to the Royal Venue team. Please don’t share passwords or card numbers.</div>
+      </div>
+    </div>
+
+    <button class="chat__down" id="chat-down" type="button" aria-label="Jump to latest message" hidden>
+      <span class="chat__down-count" id="chat-down-count" hidden></span>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+
+    <div class="chat__emoji" id="chat-emoji" hidden role="dialog" aria-label="Emoji"></div>
+
+    <form class="chat__composer" id="chat-form" autocomplete="off">
+      {% csrf_token %}
+      <button class="chat__icon" id="emoji-btn" type="button" aria-label="Emoji" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M8.2 14.2a4.6 4.6 0 0 0 7.6 0"/><circle cx="9" cy="9.7" r=".6" fill="currentColor"/><circle cx="15" cy="9.7" r=".6" fill="currentColor"/></svg>
+      </button>
+      <div class="chat__field">
+        <textarea id="chat-input" rows="1" maxlength="4000" placeholder="Type a message" aria-label="Type a message" enterkeyhint="send"></textarea>
+      </div>
+      <button class="chat__send" id="chat-send" type="submit" aria-label="Send message" disabled>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10.1 15 12 3.4 13.9z"/></svg>
+      </button>
+    </form>
+  </main>
+</div>
+{{ initial|json_script:"chat-initial" }}
+{% endblock %}
+{% block extra_scripts %}<script src="{% static 'js/chat.js' %}" defer></script>{% endblock %}

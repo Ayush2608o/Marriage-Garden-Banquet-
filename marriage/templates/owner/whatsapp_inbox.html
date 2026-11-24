@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Customer Chat Inbox — Royal Venue{% endblock %}
+{% block extra_head %}
+<style>
+body:has(.wa-page){background:#f7f6f2!important;color:#25251f!important}.wa-page{max-width:1240px;min-height:100vh;margin:0 auto;padding:32px 24px 48px;color:#25251f;font:15px/1.45 "DM Sans",Arial,sans-serif}
+.wa-page *{box-sizing:border-box}.wa-top{display:flex;justify-content:space-between;align-items:center;margin:0 0 18px}.wa-top a{color:#80602f;text-decoration:none;font-weight:600}.wa-kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#96733e;margin:0 0 6px}.wa-title{font-family:"DM Sans",Arial,sans-serif!important;font-size:clamp(26px,3vw,38px)!important;line-height:1.15!important;letter-spacing:-.035em;margin:0 0 22px!important;color:#21211c!important}.wa-layout{height:min(700px,72vh);min-height:480px;display:grid;grid-template-columns:310px minmax(0,1fr);border:1px solid #dedbd3;border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 12px 38px #382b1712}.wa-sidebar{background:#f7f6f2;border-right:1px solid #e6e2d9;display:flex;flex-direction:column;min-height:0}.wa-list-head{padding:14px;border-bottom:1px solid #e6e2d9}.wa-filter{width:100%;height:40px;border:1px solid #d8d4ca;border-radius:8px;background:white;padding:0 12px;font:13px "DM Sans",Arial,sans-serif;outline-color:#a98954}.wa-threads{overflow:auto;flex:1}.wa-thread{display:block;width:100%;border:0;border-bottom:1px solid #ebe8e1;background:transparent;text-align:left;padding:14px;cursor:pointer;color:#292820;font:13px/1.4 "DM Sans",Arial,sans-serif}.wa-thread:hover,.wa-thread.is-active{background:#eee9dd}.wa-thread-name{font-weight:700;display:flex;justify-content:space-between;gap:8px}.wa-thread-subject{display:block;color:#716f66;margin-top:3px}.wa-badge{font-size:10px;color:#fff;background:#9a7841;border-radius:10px;padding:2px 7px;white-space:nowrap}.wa-urgent{color:#a84435;font-size:10px;font-weight:700;margin-left:5px}.wa-chat{display:flex;flex-direction:column;min-width:0;min-height:0;background:#fff}.wa-chat-head{min-height:58px;padding:14px 18px;border-bottom:1px solid #ece9e2;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700}.wa-chat-meta{font-weight:400;color:#77756d;font-size:12px}.wa-messages{flex:1;overflow:auto;padding:20px;background:linear-gradient(#fff,#fcfbf8)}.wa-empty{color:#8b887f;text-align:center;margin:48px auto}.wa-message{max-width:min(76%,620px);width:fit-content;padding:10px 13px;margin:0 0 12px;border-radius:12px;background:#f1f0ec;white-space:pre-wrap;overflow-wrap:anywhere;color:#292820;font-size:13px}.wa-message.is-out{margin-left:auto;background:#e8f2e6}.wa-message-meta{display:block;margin-top:5px;font-size:10px;color:#827f76}.wa-compose{border-top:1px solid #ece9e2;background:#fff;padding:10px 14px 14px}.wa-quick{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}.wa-quick button{border:1px solid #d9d3c7;border-radius:16px;background:#faf9f6;padding:6px 10px;color:#62543b;font:11px "DM Sans",Arial,sans-serif;cursor:pointer}.wa-quick button:hover{background:#eee9dd}.wa-reply{display:flex;gap:9px}.wa-reply input{min-width:0;flex:1;border:1px solid #d9d6ce;border-radius:8px;padding:11px 13px;font:13px "DM Sans",Arial,sans-serif;outline-color:#a98954}.wa-send{border:0;border-radius:8px;background:#896b3d;color:white;padding:0 20px;font-weight:600;cursor:pointer}.wa-send:hover{background:#70542c}.wa-feedback{min-height:16px;margin:4px 2px 0;color:#a84435;font-size:11px}
+@media(max-width:700px){.wa-page{padding:20px 12px}.wa-layout{height:calc(100vh - 160px);min-height:440px;grid-template-columns:125px minmax(0,1fr)}.wa-thread{padding:12px 9px;font-size:11px}.wa-list-head{padding:8px}.wa-filter{padding:0 7px;font-size:11px}.wa-chat-head{padding:12px;font-size:12px}.wa-messages{padding:13px 9px}.wa-message{max-width:92%;font-size:12px}.wa-quick button{font-size:10px;padding:5px 7px}.wa-send{padding:0 12px}}
+.wa-pagination{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:9px 12px;border-top:1px solid #e6e2d9;color:#716f66;font-size:11px}.wa-pagination button{border:1px solid #d8d4ca;border-radius:6px;background:white;padding:5px 8px;color:#62543b;cursor:pointer}.wa-pagination button:disabled{opacity:.45;cursor:default}
+</style>
+{% endblock %}
+{% block content %}
+<main class="wa-page">
+  <div class="wa-top"><a href="{% url 'admin:index' %}">← Admin panel</a><span class="wa-kicker">Royal Venue · Operations</span></div>
+  <p class="wa-kicker">Customer care</p><h1 class="wa-title">Customer Chat Inbox</h1>
+  <div class="wa-layout">
+    <aside class="wa-sidebar"><div class="wa-list-head"><input id="filter" class="wa-filter" placeholder="Search, unread, urgent" aria-label="Filter conversations"></div>
+      <div id="thread-list" class="wa-threads">{% for thread in threads %}<button class="wa-thread{% if forloop.first %} is-active{% endif %}" data-id="{{ thread.id }}" data-unread="{{ thread.unread_count|yesno:'true,false' }}" data-urgent="{{ thread.is_urgent|yesno:'true,false' }}"><span class="wa-thread-name">{{ thread.customer_name|default:thread.customer_phone }}{% if thread.unread_count %}<span class="wa-badge">{{ thread.unread_count }}</span>{% endif %}</span><span class="wa-thread-subject">{{ thread.subject|default:'Support' }}{% if thread.is_urgent %}<span class="wa-urgent">URGENT</span>{% endif %}</span></button>{% empty %}<p class="wa-empty">No conversations yet.</p>{% endfor %}</div>
+      <nav class="wa-pagination" aria-label="Conversation pages"><button id="thread-prev" type="button" {% if not thread_page.has_previous %}disabled{% endif %}>Previous</button><span id="thread-page-label">Page {{ thread_page.number }} of {{ thread_page.paginator.num_pages }}</span><button id="thread-next" type="button" {% if not thread_page.has_next %}disabled{% endif %}>Next</button></nav>
+    </aside>
+    <section class="wa-chat" aria-label="Conversation">
+      <header id="chat-title" class="wa-chat-head"><span>Select a conversation</span><span class="wa-chat-meta">Updates automatically</span></header>
+      <div id="chat-messages" class="wa-messages"><p class="wa-empty">Choose a customer conversation to view messages.</p></div>
+      <div class="wa-compose"><div class="wa-quick" id="quick-replies"><button type="button" data-reply="Thanks for reaching Royal Venue. Could you share your preferred date and guest count?">Price quote</button><button type="button" data-reply="Please share the venue and event date. We will check availability and get back to you shortly.">Venue availability</button><button type="button" data-reply="Please share your booking reference so our dispatch team can confirm staff details securely.">Staff dispatch info</button></div>
+        <form id="reply-form" class="wa-reply"><input id="reply-text" placeholder="Write a reply…" autocomplete="off" required maxlength="4000"><button class="wa-send" type="submit">Send</button></form><div id="reply-feedback" class="wa-feedback" aria-live="polite"></div>
+      </div>
+    </section>
+  </div>
+</main>
+<script>
+(()=>{
+  let active=null;let currentPage={{ thread_page.number }};let buttons=[];const messages=document.getElementById('chat-messages'),title=document.getElementById('chat-title'),feedback=document.getElementById('reply-feedback'),threadList=document.getElementById('thread-list');
+  const csrf=()=>document.querySelector('#support-form [name=csrfmiddlewaretoken]')?.value||'';
+  function applyFilter(){const query=document.getElementById('filter').value.trim().toLowerCase();buttons.forEach(button=>{const text=button.textContent.toLowerCase();button.hidden=!(text.includes(query)||(query==='urgent'&&button.dataset.urgent==='true')||(query==='unread'&&button.dataset.unread==='true'))})}
+  function bindButtons(){buttons=[...document.querySelectorAll('.wa-thread')];buttons.forEach(button=>button.addEventListener('click',()=>{active=button.dataset.id;buttons.forEach(item=>item.classList.toggle('is-active',item===button));feedback.textContent='';load()}))}
+  function renderThreads(items){
+    if(!items.length){const empty=document.createElement('p');empty.className='wa-empty';empty.textContent='No conversations yet.';threadList.replaceChildren(empty);buttons=[];return}
+    threadList.replaceChildren(...items.map(item=>{
+      const button=document.createElement('button');button.type='button';button.className='wa-thread'+(String(item.id)===String(active)?' is-active':'');button.dataset.id=item.id;button.dataset.unread=item.unread_count?'true':'false';button.dataset.urgent=item.urgent?'true':'false';
+      const name=document.createElement('span');name.className='wa-thread-name';name.append(document.createTextNode(item.name));
+      if(item.unread_count){const badge=document.createElement('span');badge.className='wa-badge';badge.textContent=item.unread_count;name.append(badge)}
+      const subject=document.createElement('span');subject.className='wa-thread-subject';subject.append(document.createTextNode(item.subject));
+      if(item.urgent){const urgent=document.createElement('span');urgent.className='wa-urgent';urgent.textContent='URGENT';subject.append(urgent)}
+      button.append(name,subject);return button
+    }));
+    bindButtons();applyFilter()
+  }
+  async function refreshThreads(){
+    try{
+      const response=await fetch(`/owner/whatsapp/threads/?page=${currentPage}`,{headers:{'X-Requested-With':'XMLHttpRequest'}});
+      if(!response.ok)return;
+      const data=await response.json();currentPage=data.page;renderThreads(data.threads);
+      document.getElementById('thread-page-label').textContent=`Page ${data.page} of ${data.num_pages}`;
+      document.getElementById('thread-prev').disabled=!data.has_previous;document.getElementById('thread-next').disabled=!data.has_next;
+    }catch(error){feedback.textContent='Could not refresh the conversation list.'}
+  }
+  async function load(){
+    if(!active)return;
+    try{
+      const response=await fetch(`/owner/whatsapp/${active}/messages/`,{headers:{'X-Requested-With':'XMLHttpRequest'}});
+      if(!response.ok){feedback.textContent=response.status===403?'Your admin session expired. Sign in again to continue.':'Could not refresh this conversation.';return}
+      const data=await response.json();
+      const activeButton=buttons.find(button=>button.dataset.id===String(active));
+      if(activeButton){activeButton.dataset.unread='false';activeButton.querySelector('.wa-badge')?.remove()}
+      title.replaceChildren();
+      const name=document.createElement('span');name.textContent=data.thread.name;
+      const status=document.createElement('span');status.className='wa-chat-meta';status.textContent=(data.thread.status||'OPEN')+(data.thread.urgent?' · URGENT':'')+' · Live polling';title.append(name,status);
+      messages.replaceChildren(...data.messages.map(item=>{const bubble=document.createElement('div');bubble.className='wa-message'+(item.sender_type==='CUSTOMER'?'':' is-out');bubble.append(document.createTextNode(item.message_text||'[Attachment]'));const meta=document.createElement('span');meta.className='wa-message-meta';meta.textContent=item.sender_type+' · '+new Date(item.timestamp).toLocaleString();bubble.append(meta);return bubble}));
+      if(!data.messages.length){const empty=document.createElement('p');empty.className='wa-empty';empty.textContent='No messages in this conversation yet.';messages.append(empty)}
+      messages.scrollTop=messages.scrollHeight;
+    }catch(error){feedback.textContent='Could not refresh this conversation.'}
+  }
+  bindButtons();
+  document.getElementById('filter').addEventListener('input',applyFilter);
+  document.getElementById('thread-prev').addEventListener('click',()=>{if(currentPage>1){currentPage--;refreshThreads()}});
+  document.getElementById('thread-next').addEventListener('click',()=>{currentPage++;refreshThreads()});
+  document.querySelectorAll('#quick-replies button').forEach(button=>button.addEventListener('click',()=>{document.getElementById('reply-text').value=button.dataset.reply;document.getElementById('reply-text').focus()}));
+  document.getElementById('reply-form').addEventListener('submit',async event=>{event.preventDefault();if(!active){feedback.textContent='Select a conversation first.';return}const input=document.getElementById('reply-text');try{const response=await fetch(`/owner/whatsapp/${active}/reply/`,{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrf()},body:JSON.stringify({message:input.value})});if(!response.ok)throw new Error('Reply was not accepted');input.value='';feedback.textContent='';await load()}catch(error){feedback.textContent='Reply could not be sent. Refresh the page and try again.'}});
+  if(buttons.length){active=buttons[0].dataset.id;load()}setInterval(()=>{refreshThreads();load()},4000);
+})();
+</script>
+{% endblock %}

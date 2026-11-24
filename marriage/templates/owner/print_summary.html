@@ -1,0 +1,66 @@
+{% load humanize %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ summary_title }} — Royal Venue</title>
+  <style>
+    :root{font-family:Arial,sans-serif;color:#25251f;background:#f4f1ea}
+    body{margin:0;padding:32px}
+    main{max-width:760px;margin:0 auto;padding:36px;background:#fff;border:1px solid #e4dfd4}
+    header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:1px solid #ddd6c9;padding-bottom:22px}
+    h1{font:32px Georgia,serif;margin:0;color:#3a3429}
+    .brand{font-size:11px;letter-spacing:.18em;color:#8b6d3c}
+    .reference{font-weight:700;color:#795d32}
+    section{padding:20px 0;border-bottom:1px solid #ece8df}
+    h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#80745f;margin:0 0 13px}
+    dl{display:grid;grid-template-columns:170px 1fr;gap:9px 18px;margin:0}
+    dt{color:#78746c;font-size:13px}dd{margin:0;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+    .notice{font-size:12px;color:#77746a;line-height:1.6;margin:18px 0 0}
+    .print-button{margin-top:24px;padding:10px 16px;border:0;background:#87683a;color:#fff;cursor:pointer}
+    @media(max-width:560px){body{padding:12px}main{padding:22px}header{flex-direction:column}dl{grid-template-columns:1fr;gap:4px}dd{margin-bottom:10px}}
+    @media print{ :root{background:#fff}body{padding:0}main{max-width:none;padding:0;border:0}header,section{break-inside:avoid}.print-button{display:none}.notice{color:#555} }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><p class="brand">ROYAL VENUE</p><h1>{{ summary_title }}</h1></div>
+      {% if enquiry %}<div class="reference">{{ enquiry.reference }}</div>{% else %}<div class="reference">Booking #{{ booking.pk }}</div>{% endif %}
+    </header>
+    {% if enquiry %}
+      <section><h2>Contact</h2><dl>
+        <dt>Name</dt><dd>{{ enquiry.name }}</dd><dt>Email</dt><dd>{{ enquiry.email }}</dd><dt>Phone</dt><dd>{{ enquiry.phone }}</dd>
+      </dl></section>
+      <section><h2>Celebration</h2><dl>
+        <dt>Event</dt><dd>{{ enquiry.get_event_type_display }}</dd>
+        <dt>Date</dt><dd>{{ enquiry.event_date|date:"j F Y"|default:"Not decided" }}</dd>
+        <dt>Guests</dt><dd>{{ enquiry.guest_count|default:"Not decided" }}</dd>
+        <dt>Venue</dt><dd>{% if enquiry.venue %}{{ enquiry.venue.name }} · Up to {{ enquiry.venue.capacity }} guests · Published starting price ₹{{ enquiry.venue.final_price|floatformat:0|intcomma }}{% else %}Not selected{% endif %}</dd>
+        <dt>Status</dt><dd>{{ enquiry.get_status_display }}</dd>
+        <dt>Received</dt><dd>{{ enquiry.created_at|date:"j F Y, H:i" }}</dd>
+        <dt>Notes</dt><dd>{{ enquiry.notes|default:"No additional notes" }}</dd>
+      </dl></section>
+      <p class="notice">Enquiry summary only; venue availability and pricing require confirmation by Royal Venue.</p>
+    {% else %}
+      <section><h2>Customer</h2><dl>
+        <dt>Name</dt><dd>{{ booking.customer.get_full_name|default:booking.customer.username }}</dd>
+        <dt>Email</dt><dd>{{ booking.customer.email|default:"Not provided" }}</dd>
+        <dt>Phone</dt><dd>{{ booking.customer.phone|default:"Not provided" }}</dd>
+      </dl></section>
+      <section><h2>Event & venue</h2><dl>
+        <dt>Venue</dt><dd>{{ booking.venue.name }} · {{ booking.venue.city|default:booking.venue.location }}</dd>
+        <dt>Date and slot</dt><dd>{{ booking.event_date|date:"j F Y" }} · {{ booking.slot }}</dd>
+        <dt>Guests</dt><dd>{{ booking.guest_count }} · Venue capacity {{ booking.venue.capacity }}</dd>
+        <dt>Status</dt><dd>{{ booking.get_status_display }}</dd>
+        <dt>Published starting price</dt><dd>₹{{ booking.venue.final_price|floatformat:0|intcomma }}</dd>
+        <dt>Customer notes</dt><dd>{{ booking.notes|default:"No additional notes" }}</dd>
+        <dt>Decision note</dt><dd>{{ booking.decision_note|default:"None" }}</dd>
+      </dl></section>
+      <p class="notice">Booking details only; this is not an invoice or a final price quote. Confirmed terms and payment amounts are defined separately.</p>
+    {% endif %}
+    <button class="print-button" type="button" onclick="window.print()">Print / Save as PDF</button>
+  </main>
+</body>
+</html>

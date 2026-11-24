@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Sign in — Royal Venue{% endblock %}
+{% block content %}
+<main class="account-page"><section class="account-card"><a class="account-back" href="/">← Royal Venue</a><p class="account-kicker">Welcome back</p><h1>Sign in</h1><p>Access your customer account and event enquiries.</p>
+  {% if form.non_field_errors %}<div class="account-errors">{{ form.non_field_errors }}</div>{% endif %}
+  <form method="post" action="{% url 'login' %}" class="account-form">{% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
+    <label>Username<input name="username" autocomplete="username" required autofocus value="{{ form.username.value|default:'' }}"></label>
+    <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+    <button type="submit">Sign in</button>
+  </form>
+  <p class="account-switch">New to Royal Venue? <a href="{% url 'signup' %}">Create an account</a></p>
+  <p class="account-admin">Venue team? <a href="{% url 'admin:login' %}">Open Admin sign in</a></p>
+</section></main>
+<style>.account-page{min-height:75vh;display:grid;place-items:center;padding:42px 16px;background:#f7f6f2}.account-card{box-sizing:border-box;width:min(100%,460px);padding:38px;background:white;border:1px solid #e8e3d9;border-radius:14px;box-shadow:0 14px 42px #382b1710;color:#282720;font:15px/1.5 Arial,sans-serif}.account-back,.account-card a{color:#80602f}.account-kicker{text-transform:uppercase;letter-spacing:.15em;font-size:11px;color:#96733e;margin:28px 0 4px}.account-card h1{font:36px/1.1 Arial,sans-serif;margin:0 0 8px}.account-form{display:grid;gap:16px;margin-top:24px}.account-form label{display:grid;gap:6px;font-weight:600}.account-form input{box-sizing:border-box;width:100%;padding:12px;border:1px solid #d9d6ce;border-radius:7px;font:15px Arial,sans-serif}.account-form button{border:0;border-radius:7px;padding:13px;background:#896b3d;color:white;font-weight:700;cursor:pointer}.account-errors{color:#a12e24}.account-switch,.account-admin{font-size:13px;margin:18px 0 0}</style>
+{% endblock %}

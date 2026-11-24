@@ -1,0 +1,24 @@
+{% extends "admin/index.html" %}
+{% block content %}
+  <section class="rv-admin-welcome">
+    <p class="rv-admin-eyebrow">ROYAL VENUE · OPERATIONS</p>
+    <h1>Welcome back, {{ user.get_short_name|default:user.get_username }}.</h1>
+    <p class="rv-admin-intro">A considered place to look after every celebration, conversation, and detail.</p>
+    <div class="rv-admin-stats">
+      <a class="rv-admin-stat rv-admin-stat--featured" href="{% url 'whatsapp-inbox' %}">
+        <span>Unread customer messages</span><strong>{{ unread_customer_messages|default:0 }}</strong>
+      </a>
+      <a class="rv-admin-stat" href="{% url 'whatsapp-inbox' %}">
+        <span>Open conversations</span><strong>{{ open_support_conversations|default:0 }}</strong>
+      </a>
+      <a class="rv-admin-stat" href="{% url 'admin:venues_venue_changelist' %}">
+        <span>Active venues</span><strong>{{ active_venues|default:0 }}</strong>
+      </a>
+    </div>
+    <div class="rv-admin-actions">
+      <a class="rv-admin-action rv-admin-action--primary" href="{% url 'whatsapp-inbox' %}">Open customer inbox <span>↗</span></a>
+      <a class="rv-admin-action" href="{% url 'owner-dashboard' %}">Go to owner workspace <span>↗</span></a>
+    </div>
+  </section>
+  {{ block.super }}
+{% endblock %}
