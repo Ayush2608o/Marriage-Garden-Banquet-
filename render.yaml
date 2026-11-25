@@ -22,7 +22,7 @@ services:
       - key: DJANGO_DEBUG
         value: "False"
       - key: DJANGO_ALLOWED_HOSTS
-        value: localhost,127.0.0.1
+        value: localhost,127.0.0.1,marriagegardenbanquet.netlify.app
       - key: CSRF_TRUSTED_ORIGINS
         value: https://*.netlify.app
       - key: SECURE_SSL_REDIRECT
