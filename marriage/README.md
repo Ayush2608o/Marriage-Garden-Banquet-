@@ -52,20 +52,13 @@ The public imagery currently uses Unsplash image URLs and the typefaces load fro
 
 ## Production setup
 
-### Render + Netlify deploy
+### Netlify static deploy from GitHub
 
-This project is a server-rendered Django site, so Netlify cannot run it as a static site on its own. The repository-root `render.yaml` provisions the Django web service, PostgreSQL database, and persistent media disk on Render. The repository-root `netlify.toml` proxies all Netlify paths to `https://royalvenue-web.onrender.com`, keeping the Netlify URL in the browser. If Render assigns a different service URL, update the proxy destination in `netlify.toml` before deploying Netlify.
+The repository root `netlify.toml` publishes the prebuilt static site from `netlify/`. Netlify does not run the Django application in this mode. The public homepage and policy pages are available, and the enquiry/contact area links to email; customer accounts, admin, chat, bookings, APIs, and saved enquiries are not available.
 
-1. Push the complete repository, including the top-level `render.yaml` and `netlify.toml`, to GitHub.
-2. In Render, create a **Blueprint** from that repository and apply `render.yaml`. The blueprint uses paid Render resources for the database and persistent uploaded-media storage; review the plan and current price shown by Render before applying.
-3. Wait for the `royalvenue-web` service deploy to succeed. Open its `onrender.com` URL directly once to confirm it responds.
-4. In Netlify, import the same repository. Keep the repository root as the base directory and use the committed `netlify.toml`; no frontend build command is needed. Deploy the site.
-5. Copy the final Netlify domain (and any custom domain) into Render's `CSRF_TRUSTED_ORIGINS` environment variable as comma-separated HTTPS origins, for example `https://*.netlify.app,https://royalvenue.example`. Also add any custom domain hostname (without `https://`) to `DJANGO_ALLOWED_HOSTS` if Render receives requests using that host. Save and redeploy the Render service.
-6. Create the first administrator from the Render Shell with `python manage.py createsuperuser`; then sign in at `/admin/` on the Netlify URL.
+To publish, import this GitHub repository in Netlify, keep the base directory at the repository root, and let Netlify read `netlify.toml`. No build command is required. Each push to the connected branch triggers a new deployment. When updating the site, regenerate the static export from the Django project, replace the contents of `netlify/`, and commit those generated files.
 
-Render's free Postgres databases expire after 30 days, so the included Blueprint selects a paid database plan to keep production records. The persistent disk stores files uploaded through Django Admin across deploys. Make a backup plan for important database and media data. Email and WhatsApp integrations remain optional and need their own credentials in Render environment settings. Never copy `.env` or production secrets into GitHub.
-
-For manual deployment, set a unique `DJANGO_SECRET_KEY`, keep `DJANGO_DEBUG=False`, add production hostnames to `DJANGO_ALLOWED_HOSTS`, and set `CSRF_TRUSTED_ORIGINS` to comma-separated HTTPS origins. Set `DATABASE_URL` to PostgreSQL and `MEDIA_ROOT` to persistent storage. The included Render build script installs dependencies, runs `collectstatic`, and applies migrations. Configure SMTP using `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, and `ENQUIRY_NOTIFICATION_EMAIL`; configure the `WHATSAPP_*` variables to activate Meta Cloud API webhooks and replies. The inbox polls every four seconds.
+The repository also contains `render.yaml` for a separate, full Django deployment. Do not enable the Render proxy while using this static-only configuration. Never copy `.env`, local databases, or production secrets into GitHub.
 
 ## APIs
 
