@@ -1,2 +1,8 @@
 [build]
   publish = "netlify"
+
+[[redirects]]
+  from = "/*"
+  to = "https://royalvenue-web.onrender.com/:splat"
+  status = 200
+  force = true

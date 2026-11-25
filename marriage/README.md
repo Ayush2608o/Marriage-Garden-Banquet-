@@ -54,7 +54,7 @@ The public imagery currently uses Unsplash image URLs and the typefaces load fro
 
 ### Free Render + Netlify deploy
 
-The Django app runs on Render and uses the existing `marriagedb` Free Postgres service; `render.yaml` defines the app and database association. After the Render web service is healthy, configure the repository-root `netlify.toml` to proxy requests to its `onrender.com` hostname so the existing Netlify domain serves the full Django app.
+The Django app runs on Render in Virginia and uses the existing `marriagedb` Free Postgres service; `render.yaml` defines the app and database association. The repository-root `netlify.toml` proxies requests through the existing Netlify domain to the Render service.
 
 The Free plan is for testing, not production. Render Free Postgres is limited to 1 GB, has no backups, and expires 30 days after creation; data is deleted after the additional 14-day recovery window unless upgraded. Free web services sleep after 15 minutes without traffic, take about a minute to wake, and have an ephemeral filesystem. Uploaded files are not durable, and outbound SMTP ports are blocked. Check the current Render limits before accepting real bookings or storing customer records.
 
