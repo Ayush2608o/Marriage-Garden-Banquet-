@@ -52,13 +52,13 @@ The public imagery currently uses Unsplash image URLs and the typefaces load fro
 
 ## Production setup
 
-### Netlify static deploy from GitHub
+### Free Render + Netlify deploy
 
-The repository root `netlify.toml` publishes the prebuilt static site from `netlify/`. Netlify does not run the Django application in this mode. The public homepage and policy pages are available, and the enquiry/contact area links to email; customer accounts, admin, chat, bookings, APIs, and saved enquiries are not available.
+The Django app runs on Render and uses the existing `marriagedb` Free Postgres service; `render.yaml` defines the app and database association. After the Render web service is healthy, configure the repository-root `netlify.toml` to proxy requests to its `onrender.com` hostname so the existing Netlify domain serves the full Django app.
 
-To publish, import this GitHub repository in Netlify, keep the base directory at the repository root, and let Netlify read `netlify.toml`. No build command is required. Each push to the connected branch triggers a new deployment. When updating the site, regenerate the static export from the Django project, replace the contents of `netlify/`, and commit those generated files.
+The Free plan is for testing, not production. Render Free Postgres is limited to 1 GB, has no backups, and expires 30 days after creation; data is deleted after the additional 14-day recovery window unless upgraded. Free web services sleep after 15 minutes without traffic, take about a minute to wake, and have an ephemeral filesystem. Uploaded files are not durable, and outbound SMTP ports are blocked. Check the current Render limits before accepting real bookings or storing customer records.
 
-The repository also contains `render.yaml` for a separate, full Django deployment. Do not enable the Render proxy while using this static-only configuration. Never copy `.env`, local databases, or production secrets into GitHub.
+The Render build runs migrations against Postgres but does not import local SQLite records. Never commit `.env`, SQLite databases, customer records, chat messages, or production secrets to GitHub.
 
 ## APIs
 

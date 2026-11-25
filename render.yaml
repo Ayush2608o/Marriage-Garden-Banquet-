@@ -1,26 +1,20 @@
 databases:
-  - name: royalvenue-db
-    plan: basic-256mb
-    databaseName: royalvenue
-    user: royalvenue
+  - name: marriagedb
+    plan: free
 
 services:
   - type: web
     name: royalvenue-web
     runtime: python
-    plan: starter
+    plan: free
     rootDir: marriage
     buildCommand: bash build.sh
     startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
     healthCheckPath: /
-    disk:
-      name: royalvenue-media
-      mountPath: /opt/render/project/src/marriage/media
-      sizeGB: 1
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: royalvenue-db
+          name: marriagedb
           property: connectionString
       - key: DJANGO_SECRET_KEY
         generateValue: true
@@ -30,8 +24,6 @@ services:
         value: localhost,127.0.0.1
       - key: CSRF_TRUSTED_ORIGINS
         value: https://*.netlify.app
-      - key: MEDIA_ROOT
-        value: /opt/render/project/src/marriage/media
       - key: SECURE_SSL_REDIRECT
         value: "True"
       - key: WEB_CONCURRENCY
